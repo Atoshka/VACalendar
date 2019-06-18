@@ -43,6 +43,10 @@ public struct VAWeekDaysViewAppearance {
     
 }
 
+public protocol VAWeekDaysViewDelegate: class {
+    func didSelectDay(with dayLabel: String)
+}
+
 public class VAWeekDaysView: UIView {
     
     public var appearance = VAWeekDaysViewAppearance() {
@@ -51,8 +55,10 @@ public class VAWeekDaysView: UIView {
         }
     }
     
+    public var delegate: VAWeekDaysViewDelegate?
+    
     private let separatorView = UIView()
-    private var dayLabels = [UILabel]()
+    private var dayButtons = [UIButton]()
     
     override public init(frame: CGRect) {
         super.init(frame: frame)
@@ -70,12 +76,12 @@ public class VAWeekDaysView: UIView {
         super.layoutSubviews()
         
         let width = frame.width - (appearance.leftInset + appearance.rightInset)
-        let dayWidth = width / CGFloat(dayLabels.count)
+        let dayWidth = width / CGFloat(dayButtons.count)
         
-        dayLabels.enumerated().forEach { index, label in
-            let x = index == 0 ? appearance.leftInset : dayLabels[index - 1].frame.maxX
+        dayButtons.enumerated().forEach { index, button in
+            let x = index == 0 ? appearance.leftInset : dayButtons[index - 1].frame.maxX
 
-            label.frame = CGRect(
+            button.frame = CGRect(
                 x: x,
                 y: 0,
                 width: dayWidth,
@@ -95,22 +101,30 @@ public class VAWeekDaysView: UIView {
     
     private func setupView() {
         subviews.forEach { $0.removeFromSuperview() }
-        dayLabels = []
+        dayButtons = []
         
         let names = getWeekdayNames()
         names.enumerated().forEach { index, name in
-            let label = UILabel()
-            label.text = name
-            label.textAlignment = .center
-            label.font = appearance.weekDayTextFont
-            label.textColor = appearance.weekDayTextColor
-            dayLabels.append(label)
-            addSubview(label)
+            let btn = UIButton()
+            btn.setTitle(name, for: .normal)
+            btn.tag = index
+            btn.titleLabel?.font = appearance.weekDayTextFont
+            btn.setTitleColor(appearance.weekDayTextColor, for: .normal)
+            btn.addTarget(self, action: #selector(weekDayClicked(btn:)), for: .touchUpInside)
+            dayButtons.append(btn)
+            addSubview(btn)
         }
         
         separatorView.backgroundColor = appearance.separatorBackgroundColor
         addSubview(separatorView)
         layoutSubviews()
+    }
+    
+    @objc
+    private func weekDayClicked(btn: UIButton){
+        let names = getWeekdayNames()
+        let day = names[btn.tag]
+        self.delegate?.didSelectDay(with: day)
     }
     
     private func getWeekdayNames() -> [String] {
