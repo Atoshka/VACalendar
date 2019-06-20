@@ -58,7 +58,7 @@ public struct VAWeekDaysViewAppearance {
 }
 
 public protocol VAWeekDaysViewDelegate: class {
-    func didSelectDay(with dayLabel: String)
+    func didTapDay(with dayLabel: String, selected: Bool)
 }
 
 public class VAWeekDaysView: UIView {
@@ -157,8 +157,8 @@ public class VAWeekDaysView: UIView {
     private func weekDayClicked(btn: UIButton){
         let names = getWeekdayNames()
         let day = names[btn.tag]
-        self.delegate?.didSelectDay(with: day)
         btn.isSelected = !btn.isSelected
+        self.delegate?.didTapDay(with: day, selected: btn.isSelected)
         self.updateStyle(for: btn)
     }
     

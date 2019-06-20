@@ -100,6 +100,11 @@ public class VACalendar {
         months.forEach { $0.deselectAll() }
     }
     
+    func deselectDates(_ dates: [Date], in month: VAMonth) {
+        let deselectedList = month.deselectDates(dates)
+        selectedDays = Array(Set(selectedDays).subtracting(Set(deselectedList)))
+    }
+    
     private func generateMonths(from startDate: Date, endDate: Date) -> [VAMonth] {
         let startComponents = calendar.dateComponents([.year, .month], from: startDate)
         let endComponents = calendar.dateComponents([.year, .month], from: endDate)

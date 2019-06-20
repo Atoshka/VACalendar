@@ -48,6 +48,12 @@ class VAMonth {
         return calendar.isDate(date, equalTo: self.date, toGranularity: .month)
     }
     
+    func deselectDates(_ dates: [Date]) -> [VADay] {
+        var deselected = [VADay]()
+        weeks.forEach { deselected.append(contentsOf: $0.deselectDates(dates: dates)) }
+        return deselected
+    }
+    
     func deselectAll() {
         weeks.forEach { $0.deselectAll() }
     }

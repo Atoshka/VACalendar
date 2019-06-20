@@ -29,6 +29,18 @@ class VAWeek {
         return calendar.isDate(date, equalTo: self.date, toGranularity: .weekOfYear)
     }
     
+    func deselectDates(dates: [Date]) -> [VADay] {
+        var deselectedDates = [VADay]()
+        
+        for var day in days {
+            if dates.contains(day.date) == true {
+                deselectedDates.append(day)
+                day.setSelectionState(.available)
+            }
+        }
+        return deselectedDates
+    }
+    
     func deselectAll() {
         days.forEach { $0.setSelectionState(.available) }
     }

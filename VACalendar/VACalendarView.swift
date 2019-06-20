@@ -111,6 +111,16 @@ public class VACalendarView: UIScrollView {
         calendar.selectDates(dates)
     }
     
+    public func deselectDates(_ dates: [Date]) {
+        guard let month = currentMonth?.month else {
+            assert(false, "Error! Expected month!")
+            return
+        }
+
+        calendar.deselectDates(dates, in: month)
+    }
+    
+    
     public func setAvailableDates(_ availability: DaysAvailability) {
         calendar.setDaysAvailability(availability)
     }

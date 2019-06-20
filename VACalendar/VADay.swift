@@ -106,5 +106,10 @@ extension VADay: Comparable {
     static func ==(lhs: VADay, rhs: VADay) -> Bool {
         return lhs.dateInDay(rhs.date)
     }
-    
+}
+
+extension VADay: Hashable {
+    var hashValue: Int {
+        return date.hashValue
+    }
 }
