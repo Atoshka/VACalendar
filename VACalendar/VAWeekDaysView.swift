@@ -99,9 +99,9 @@ public class VAWeekDaysView: UIView {
             guard
                 let title = arg.element.titleLabel?.text,
                 let dataSource = self.dataSource
-            else {
-                assert(false, "Error!")
-                return
+                else {
+                    assert(false, "Error!")
+                    return
             }
             arg.element.isSelected = dataSource.weekDaysSelectionStates(for: title)
             
@@ -119,7 +119,7 @@ public class VAWeekDaysView: UIView {
         
         dayButtons.enumerated().forEach { index, button in
             let x = index == 0 ? appearance.leftInset : (dayButtons[index - 1].frame.maxX + appearance.leftInset)
-
+            
             button.frame = CGRect(
                 x: x,
                 y: 0,
@@ -180,9 +180,7 @@ public class VAWeekDaysView: UIView {
     private func weekDayClicked(btn: UIButton){
         let names = getWeekdayNames()
         let day = names[btn.tag]
-        btn.isSelected = !btn.isSelected
-        self.delegate?.didTapDay(with: day, selected: btn.isSelected)
-        self.updateStyle(for: btn)
+        self.delegate?.didTapDay(with: day, selected: !btn.isSelected)
     }
     
     private func getWeekdayNames() -> [String] {
