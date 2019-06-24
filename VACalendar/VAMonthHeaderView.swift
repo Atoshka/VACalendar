@@ -3,6 +3,7 @@ import UIKit
 public protocol VAMonthHeaderViewDelegate: class {
     func didTapNextMonth()
     func didTapPreviousMonth()
+    func monthDidChanged(_ monthDate: Date)
 }
 
 public struct VAMonthHeaderViewAppearance {
@@ -111,6 +112,7 @@ public class VAMonthHeaderView: UIView {
 extension VAMonthHeaderView: VACalendarMonthDelegate {
     
     public func monthDidChange(_ currentMonth: Date) {
+        delegate?.monthDidChanged(currentMonth)
         monthLabel.text = dateFormatter.string(from: currentMonth)
     }
     

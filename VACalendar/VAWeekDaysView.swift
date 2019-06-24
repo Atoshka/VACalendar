@@ -59,6 +59,12 @@ public struct VAWeekDaysViewAppearance {
 
 public protocol VAWeekDaysViewDelegate: class {
     func didTapDay(with dayLabel: String, selected: Bool)
+    
+}
+
+public protocol VAWeekDaysViewDataSource: class {
+    // Used to change selection style for week day button if needed otherwice return false, title should be localized week day value with .short format
+    func weekDaysSelectionStates(for title: String) -> Bool
 }
 
 public class VAWeekDaysView: UIView {
@@ -70,6 +76,7 @@ public class VAWeekDaysView: UIView {
     }
     
     public var delegate: VAWeekDaysViewDelegate?
+    public var dataSource: VAWeekDaysViewDataSource?
     
     private let separatorView = UIView()
     private var dayButtons = [UIButton]()
@@ -84,6 +91,22 @@ public class VAWeekDaysView: UIView {
         super.init(coder: aDecoder)
         
         setupView()
+    }
+    
+    public func reloadData() {
+        dayButtons.enumerated().forEach { (arg) in
+            
+            guard
+                let title = arg.element.titleLabel?.text,
+                let dataSource = self.dataSource
+            else {
+                assert(false, "Error!")
+                return
+            }
+            arg.element.isSelected = dataSource.weekDaysSelectionStates(for: title)
+            
+            updateStyle(for: arg.element)
+        }
     }
     
     public override func layoutSubviews() {
