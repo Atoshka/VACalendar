@@ -35,7 +35,7 @@ class VAWeek {
         for var day in days {
             if dates.contains(day.date) == true {
                 deselectedDates.append(day)
-                day.setSelectionState(.available)
+                day.state = day.reverseSelectionState
             }
         }
         return deselectedDates

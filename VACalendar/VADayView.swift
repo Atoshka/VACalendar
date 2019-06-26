@@ -95,7 +95,7 @@ class VADayView: UIView {
     }
     
     private func setState(_ state: VADayState) {
-        if dayViewAppearanceDelegate?.shape?() == .circle && state == .selected {
+        if dayViewAppearanceDelegate?.shape?() == .circle && state == .selected ||  dayViewAppearanceDelegate?.shape?() == .circle && state == .today{
             dateLabel.clipsToBounds = true
             dateLabel.layer.cornerRadius = dateLabel.frame.height / 2
         }
