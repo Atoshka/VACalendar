@@ -24,6 +24,9 @@ public enum VACalendarViewType {
 public protocol VACalendarViewDelegate: class {
     // use this method for single selection style
     @objc optional func selectedDate(_ date: Date)
+    
+    //used for indicate about deselection
+    @objc optional func deselectDate(_ date: Date)
     // use this method for multi selection style
     @objc optional func selectedDates(_ dates: [Date])
 }
@@ -116,7 +119,7 @@ public class VACalendarView: UIScrollView {
             assert(false, "Error! Expected month!")
             return
         }
-
+        
         calendar.deselectDates(dates, in: month)
     }
     
@@ -284,6 +287,14 @@ extension VACalendarView: VACalendarDelegate {
     func selectedDaysDidUpdate(_ days: [VADay]) {
         let dates = days.map { $0.date }
         calendarDelegate?.selectedDates?(dates)
+    }
+    
+    func didSelectDay(day: VADay) {
+        calendarDelegate?.selectedDate?(day.date)
+    }
+    
+    func didDeselectDay(day: VADay) {
+        calendarDelegate?.deselectDate?(day.date)
     }
     
 }

@@ -12,11 +12,13 @@ import UIKit
 public protocol VADayViewAppearanceDelegate: class {
     @objc optional func font(for state: VADayState) -> UIFont
     @objc optional func textColor(for state: VADayState) -> UIColor
+    @objc optional func holidayTextColor() -> UIColor
     @objc optional func textBackgroundColor(for state: VADayState) -> UIColor
     @objc optional func backgroundColor(for state: VADayState) -> UIColor
     @objc optional func borderWidth(for state: VADayState) -> CGFloat
     @objc optional func borderColor(for state: VADayState) -> UIColor
     @objc optional func dotBottomVerticalOffset(for state: VADayState) -> CGFloat
+    @objc optional func isHoliday(day date: Date) -> Bool
     @objc optional func shape() -> VADayShape
     // percent of the selected area to be painted
     @objc optional func selectedArea() -> CGFloat
@@ -82,7 +84,7 @@ class VADayView: UIView {
             height: side
         )
         dateLabel.center = CGPoint(x: frame.width / 2, y: frame.height / 2)
-
+        
         setState(day.state)
         addSubview(dateLabel)
         updateSupplementaryViews()
@@ -95,18 +97,29 @@ class VADayView: UIView {
     }
     
     private func setState(_ state: VADayState) {
-        if dayViewAppearanceDelegate?.shape?() == .circle && state == .selected ||  dayViewAppearanceDelegate?.shape?() == .circle && state == .today{
+        
+        if dayViewAppearanceDelegate?.shape?() == .circle  {
             dateLabel.clipsToBounds = true
             dateLabel.layer.cornerRadius = dateLabel.frame.height / 2
         }
         
         backgroundColor = dayViewAppearanceDelegate?.backgroundColor?(for: state) ?? backgroundColor
-        layer.borderColor = dayViewAppearanceDelegate?.borderColor?(for: state).cgColor ?? layer.borderColor
-        layer.borderWidth = dayViewAppearanceDelegate?.borderWidth?(for: state) ?? dateLabel.layer.borderWidth
+        let isHoliday = dayViewAppearanceDelegate?.isHoliday?(day: day.date)
         
+        dateLabel.layer.borderColor = UIColor.clear.cgColor
+        dateLabel.layer.borderWidth = 0
         dateLabel.textColor = dayViewAppearanceDelegate?.textColor?(for: state) ?? dateLabel.textColor
-        dateLabel.backgroundColor = dayViewAppearanceDelegate?.textBackgroundColor?(for: state) ?? dateLabel.backgroundColor
         
+        if isHoliday == true {
+            if state == .selected {
+                dateLabel.layer.borderColor = dayViewAppearanceDelegate?.borderColor?(for: state).cgColor ?? layer.borderColor
+                dateLabel.layer.borderWidth = dayViewAppearanceDelegate?.borderWidth?(for: state) ?? dateLabel.layer.borderWidth
+            } else {
+                dateLabel.textColor = dayViewAppearanceDelegate?.holidayTextColor?() ?? dateLabel.textColor
+            }
+        }
+        
+        dateLabel.backgroundColor = dayViewAppearanceDelegate?.textBackgroundColor?(for: state) ?? dateLabel.backgroundColor
         updateSupplementaryViews()
     }
     
@@ -117,7 +130,7 @@ class VADayView: UIView {
             switch supplementary {
             case .bottomDots(let colors):
                 let stack = dotStackView
-
+                
                 colors.forEach { color in
                     let dotView = VADotView(size: dotSize, color: color)
                     stack.addArrangedSubview(dotView)

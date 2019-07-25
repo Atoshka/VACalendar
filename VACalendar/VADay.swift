@@ -23,10 +23,10 @@ public enum VADaySupplementary: Hashable {
     // 3 dot max
     case bottomDots([UIColor])
     
-    public var hashValue: Int {
+    public func hash(into hasher: inout Hasher) {
         switch self {
-        case .bottomDots:
-            return 1
+        case .bottomDots: hasher.combine(1)
+            
         }
     }
     
@@ -42,7 +42,7 @@ class VADay {
     var stateChanged: ((VADayState) -> Void)?
     var supplementariesDidUpdate: (() -> Void)?
     let calendar: Calendar
-
+    
     var reverseSelectionState: VADayState {
         if isToday {
             return state == .today ? .selected : .today
@@ -90,7 +90,6 @@ class VADay {
     
     func setSelectionState(_ state: VADayState) {
         guard state == reverseSelectionState && isSelectable else { return }
-        
         self.state = state
     }
     
@@ -101,11 +100,9 @@ class VADay {
     func set(_ supplementaries: [VADaySupplementary]) {
         self.supplementaries = Set(supplementaries)
     }
-    
 }
 
 extension VADay: Comparable {
-    
     static func <(lhs: VADay, rhs: VADay) -> Bool {
         return !lhs.dateInDay(rhs.date)
     }
@@ -116,7 +113,7 @@ extension VADay: Comparable {
 }
 
 extension VADay: Hashable {
-    var hashValue: Int {
-        return date.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(date.hashValue)
     }
 }

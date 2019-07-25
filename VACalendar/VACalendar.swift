@@ -10,6 +10,8 @@ import Foundation
 
 protocol VACalendarDelegate: class {
     func selectedDaysDidUpdate(_ days: [VADay])
+    func didSelectDay(day: VADay)
+    func didDeselectDay(day: VADay)
 }
 
 public enum DaysAvailability {
@@ -79,8 +81,10 @@ public class VACalendar {
         months.first(where: { $0.dateInThisMonth(day.date) })?.setDaySelectionState(day, state: state)
         
         if let index = selectedDays.index(of: day) {
+            delegate?.didDeselectDay(day: day)
             selectedDays.remove(at: index)
         } else {
+            delegate?.didSelectDay(day: day)
             selectedDays.append(day)
         }
     }
