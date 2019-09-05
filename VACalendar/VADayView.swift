@@ -19,6 +19,9 @@ public protocol VADayViewAppearanceDelegate: class {
     @objc optional func borderColor(for state: VADayState) -> UIColor
     @objc optional func dotBottomVerticalOffset(for state: VADayState) -> CGFloat
     @objc optional func isHoliday(day date: Date) -> Bool
+    @objc optional func getLoadedBufferAngles(for date: Date) -> [CGFloat]
+    @objc optional func getCicleProgressColor() -> UIColor
+    @objc optional func getCicrcleProgressBackgroundColor() -> UIColor
     @objc optional func shape() -> VADayShape
     // percent of the selected area to be painted
     @objc optional func selectedArea() -> CGFloat
@@ -49,6 +52,54 @@ class VADayView: UIView {
     private let dotSize: CGFloat = 5
     private var supplementaryViews = [UIView]()
     private let dateLabel = UILabel()
+    
+    override func draw(_ rect: CGRect) {
+        
+        guard
+            let angles = dayViewAppearanceDelegate?.getLoadedBufferAngles?(for: day.date),
+            angles.count >= 2
+        else {
+            return
+        }
+        
+        guard
+            let startAngle = angles.first,
+            let endAngle = angles.last
+        else {
+            return
+        }
+        
+        let shortestSide: CGFloat = (frame.width < frame.height ? frame.width : frame.height)
+        let side: CGFloat = shortestSide * (dayViewAppearanceDelegate?.selectedArea?() ?? 0.8)
+        let radius = side / 2
+        let centerPoint = CGPoint(x: rect.width / 2, y: rect.height / 2)
+
+        let path = UIBezierPath(arcCenter: centerPoint, radius: radius, startAngle: CGFloat(startAngle), endAngle: CGFloat(endAngle), clockwise: true)
+
+        if startAngle != 0 && endAngle != 0 {
+            let pathBack = UIBezierPath(arcCenter: centerPoint, radius: radius, startAngle: CGFloat(3*Float.pi / 2), endAngle: CGFloat(3*Float.pi / 2 - 0.001), clockwise: true)
+            
+            let layerBack = CAShapeLayer()
+            layerBack.fillColor = UIColor.clear.cgColor
+            layerBack.strokeColor = UIColor.lightGray.cgColor //dayViewAppearanceDelegate?.getCicrcleProgressBackgroundColor?().cgColor ?? UIColor.lightGray.cgColor
+            
+            layerBack.backgroundColor = UIColor.clear.cgColor
+            layerBack.lineWidth = 2.0
+            layerBack.shouldRasterize = false
+            layerBack.path = pathBack.cgPath
+            self.layer.addSublayer(layerBack)
+        }
+        
+        let layerFront = CAShapeLayer()
+        layerFront.fillColor = UIColor.clear.cgColor
+        layerFront.strokeColor = dayViewAppearanceDelegate?.getCicleProgressColor?().cgColor ?? UIColor.black.cgColor
+        
+        layerFront.backgroundColor = UIColor.clear.cgColor
+        layerFront.lineWidth = 2.0
+        layerFront.shouldRasterize = false
+        layerFront.path = path.cgPath
+        self.layer.addSublayer(layerFront)
+    }
     
     init(day: VADay) {
         self.day = day
