@@ -9,7 +9,7 @@
 import UIKit
 
 public enum VASelectionStyle {
-    case single, multi
+    case single, multi, none
 }
 
 public enum VACalendarScrollDirection {
@@ -45,7 +45,7 @@ public class VACalendarView: UIScrollView {
     
     public var startDate = Date()
     public var showDaysOut = true
-    public var selectionStyle: VASelectionStyle = .single
+    public var selectionStyle: VASelectionStyle = .none
     
     private var calculatedWeekHeight: CGFloat = 100
     private let calendar: VACalendar
@@ -141,6 +141,10 @@ public class VACalendarView: UIScrollView {
             scrollToStartDate()
         case .vertical: break
         }
+    }
+    
+    public func reloadData() {
+        drawVisibleMonth(with: self.contentOffset)
     }
     
     // MARK: Private Methods.
@@ -312,7 +316,8 @@ extension VACalendarView: VAMonthViewDelegate {
             
         case .multi:
             calendar.setDaySelectionState(day, state: day.reverseSelectionState)
+        case .none:
+            break
         }
     }
-    
 }
