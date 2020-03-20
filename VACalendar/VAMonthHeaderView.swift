@@ -113,7 +113,7 @@ extension VAMonthHeaderView: VACalendarMonthDelegate {
     
     public func monthDidChange(_ currentMonth: Date) {
         delegate?.monthDidChanged(currentMonth)
-        monthLabel.text = dateFormatter.string(from: currentMonth)
+        monthLabel.text = dateFormatter.string(from: currentMonth).capitalized
     }
     
 }
