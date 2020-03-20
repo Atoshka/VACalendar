@@ -6,9 +6,9 @@ public enum VAWeekDaysSymbolsType {
     func names(from calendar: Calendar) -> [String] {
         switch self {
         case .short:
-            return calendar.shortWeekdaySymbols
+            return calendar.shortWeekdaySymbols.map { $0.uppercased() }
         case .veryShort:
-            return calendar.veryShortWeekdaySymbols
+            return calendar.veryShortWeekdaySymbols.map { $0.uppercased() }
         }
     }
     
