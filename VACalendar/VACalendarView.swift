@@ -143,6 +143,10 @@ public class VACalendarView: UIScrollView {
         }
     }
     
+    public func showCurrentMonth() {
+        scrollToStartDate()
+    }
+    
     public func reloadData() {
         drawVisibleMonth(with: self.contentOffset)
     }
