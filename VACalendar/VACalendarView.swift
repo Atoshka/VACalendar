@@ -256,6 +256,7 @@ public class VACalendarView: UIScrollView {
             monthViews.enumerated().forEach { index, month in
                 if index == currentIndex || index + 1 == currentIndex || index - 1 == currentIndex {
                     month.delegate = self
+                    month.clean()
                     month.setupWeeksView(with: viewType)
                 } else {
                     month.clean()
