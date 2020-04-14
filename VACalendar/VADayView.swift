@@ -76,29 +76,35 @@ class VADayView: UIView {
 
         let path = UIBezierPath(arcCenter: centerPoint, radius: radius, startAngle: CGFloat(startAngle), endAngle: CGFloat(endAngle), clockwise: true)
 
+        layer.sublayers?.forEach { sublayer in
+            if sublayer.name == "progress_layer" || sublayer.name == "progress_background_layer" {
+                sublayer.removeFromSuperlayer()
+            }
+        }
+        
         if startAngle != 0 && endAngle != 0 {
             let pathBack = UIBezierPath(arcCenter: centerPoint, radius: radius, startAngle: CGFloat(3*Float.pi / 2), endAngle: CGFloat(3*Float.pi / 2 - 0.001), clockwise: true)
             
             let layerBack = CAShapeLayer()
             layerBack.fillColor = UIColor.clear.cgColor
-            layerBack.strokeColor = UIColor.lightGray.cgColor //dayViewAppearanceDelegate?.getCicrcleProgressBackgroundColor?().cgColor ?? UIColor.lightGray.cgColor
-            
+            layerBack.strokeColor = UIColor.lightGray.cgColor
+            layerBack.name = "progress_background_layer"
             layerBack.backgroundColor = UIColor.clear.cgColor
             layerBack.lineWidth = 2.0
             layerBack.shouldRasterize = false
             layerBack.path = pathBack.cgPath
-            self.layer.addSublayer(layerBack)
+            layer.addSublayer(layerBack)
         }
         
         let layerFront = CAShapeLayer()
         layerFront.fillColor = UIColor.clear.cgColor
         layerFront.strokeColor = dayViewAppearanceDelegate?.getCicleProgressColor?().cgColor ?? UIColor.black.cgColor
-        
+        layerFront.name = "progress_layer"
         layerFront.backgroundColor = UIColor.clear.cgColor
         layerFront.lineWidth = 2.0
         layerFront.shouldRasterize = false
         layerFront.path = path.cgPath
-        self.layer.addSublayer(layerFront)
+        layer.addSublayer(layerFront)
     }
     
     init(day: VADay) {
