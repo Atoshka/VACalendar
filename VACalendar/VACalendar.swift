@@ -61,6 +61,15 @@ public class VACalendar {
         selectedDays = days
     }
     
+    func appendSelectedDates(_ dates: [Date]) {
+        let days = months.flatMap { $0.days(for: dates) }
+        days.forEach { $0.setSelectionState(.selected) }
+        
+        var set: Set<VADay> = Set(selectedDays)
+        days.forEach { set.insert($0) }
+        selectedDays = Array(set)
+    }
+    
     func setDaysAvailability(_ availability: DaysAvailability) {
         daysAvailability = availability
         

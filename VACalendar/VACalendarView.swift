@@ -109,9 +109,13 @@ public class VACalendarView: UIScrollView {
         }
     }
     
-    public func selectDates(_ dates: [Date]) {
+    public func updateSelectedDates(_ dates: [Date]) {
         calendar.deselectAll()
         calendar.selectDates(dates)
+    }
+    
+    public func selectDates(_ dates: [Date]) {
+        calendar.appendSelectedDates(dates)
     }
     
     public func deselectDates(_ dates: [Date]) {
@@ -284,11 +288,10 @@ extension VACalendarView: UIScrollViewDelegate {
     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         guard let monthView = getMonthView(with: scrollView.contentOffset) else { return }
-        
-        monthDelegate?.monthDidChange(monthView.month.date)
+           
         drawVisibleMonth(with: scrollView.contentOffset)
+        monthDelegate?.monthDidChange(monthView.month.date)
     }
-    
 }
 
 extension VACalendarView: VACalendarDelegate {
