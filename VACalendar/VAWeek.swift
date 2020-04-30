@@ -32,7 +32,7 @@ class VAWeek {
     func deselectDates(dates: [Date]) -> [VADay] {
         var deselectedDates = [VADay]()
         
-        for var day in days {
+        for day in days {
             if dates.contains(day.date) == true {
                 deselectedDates.append(day)
                 day.state = day.reverseSelectionState
