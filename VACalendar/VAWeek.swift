@@ -42,7 +42,7 @@ class VAWeek {
     }
     
     func deselectAll() {
-        days.forEach { $0.setSelectionState(.available) }
+        days.forEach { $0.isToday ? $0.setSelectionState(.today) : $0.setSelectionState(.available) }
     }
     
     func setDaySelectionState(_ day: VADay, state: VADayState)  {
