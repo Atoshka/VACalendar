@@ -316,12 +316,11 @@ extension VACalendarView: VAMonthViewDelegate {
     func dayStateChanged(_ day: VADay, in month: VAMonth) {
         switch selectionStyle {
         case .single:
-            guard day.state == .available else { return }
+            guard day.state == .available ||  day.state == .today else { return }
             
             calendar.deselectAll()
             calendar.setDaySelectionState(day, state: .selected)
             calendarDelegate?.selectedDate?(day.date)
-            
         case .multi:
             calendar.setDaySelectionState(day, state: day.reverseSelectionState)
         case .none:
