@@ -191,6 +191,8 @@ public class VACalendarView: UIScrollView {
     }
     
     private func setupMonths() {
+        monthViews.forEach { $0.removeFromSuperview() }
+        
         monthViews = calendar.months.map {
             VAMonthView(month: $0, showDaysOut: showDaysOut, weekHeight: weekHeight, viewType: viewType)
         }
