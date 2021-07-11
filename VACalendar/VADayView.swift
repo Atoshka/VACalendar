@@ -19,9 +19,11 @@ public protocol VADayViewAppearanceDelegate: class {
     @objc optional func borderColor(for state: VADayState) -> UIColor
     @objc optional func dotBottomVerticalOffset(for state: VADayState) -> CGFloat
     @objc optional func isHoliday(day date: Date) -> Bool
+    @objc optional func isWorkingDate(_ date: Date) -> Bool
     @objc optional func getLoadedBufferAngles(for date: Date) -> [CGFloat]
     @objc optional func getCicleProgressColor() -> UIColor
     @objc optional func getCicrcleProgressBackgroundColor() -> UIColor
+    @objc optional func getWorkDayColor() -> UIColor
     @objc optional func shape() -> VADayShape
     // percent of the selected area to be painted
     @objc optional func selectedArea() -> CGFloat
@@ -62,9 +64,23 @@ class VADayView: UIView {
             return
         }
         
-        guard
-            let startAngle = angles.first,
-            let endAngle = angles.last
+        let isWorkingDay = dayViewAppearanceDelegate?.isWorkingDate?(day.date)
+        
+        var startAngle = angles.first
+        var endAngle = angles.last
+        var drawWorkingCircle = false
+        
+        if let _ = isWorkingDay,
+           startAngle == nil,
+           endAngle == nil
+        {
+            startAngle = 0
+            endAngle = 2 * CGFloat(Float.pi)
+            drawWorkingCircle = true
+        }
+        
+        guard let startAngle = startAngle,
+              let endAngle = endAngle
         else {
             return
         }
@@ -96,9 +112,11 @@ class VADayView: UIView {
             layer.addSublayer(layerBack)
         }
         
+        let progressColor = drawWorkingCircle ? (dayViewAppearanceDelegate?.getWorkDayColor?() ?? .blue).cgColor : (dayViewAppearanceDelegate?.getCicleProgressColor?() ?? UIColor.black).cgColor
+        
         let layerFront = CAShapeLayer()
         layerFront.fillColor = UIColor.clear.cgColor
-        layerFront.strokeColor = dayViewAppearanceDelegate?.getCicleProgressColor?().cgColor ?? UIColor.black.cgColor
+        layerFront.strokeColor = progressColor
         layerFront.name = "progress_layer"
         layerFront.backgroundColor = UIColor.clear.cgColor
         layerFront.lineWidth = 2.0
