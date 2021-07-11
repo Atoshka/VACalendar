@@ -64,15 +64,15 @@ class VADayView: UIView {
             return
         }
         
-        let isWorkingDay = dayViewAppearanceDelegate?.isWorkingDate?(day.date)
+        let isWorkingDay = dayViewAppearanceDelegate?.isWorkingDate?(day.date) ?? false
         
         var startAngle = angles.first
         var endAngle = angles.last
         var drawWorkingCircle = false
         
-        if let _ = isWorkingDay,
-           startAngle == nil,
-           endAngle == nil
+        if isWorkingDay &&
+            startAngle == 0 &&
+            endAngle == 0
         {
             startAngle = 0
             endAngle = 2 * CGFloat(Float.pi)
